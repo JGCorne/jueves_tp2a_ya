@@ -1,0 +1,17 @@
+### Home
+GET http://localhost:3000/
+
+### Listado de libros
+GET http://localhost:3000/libros
+
+### Ruta inexistente (404)
+GET http://localhost:3000/no-existe
+
+### Desafío: eco del body
+POST http://localhost:3000/eco
+Content-Type: application/json
+
+{
+  "titulo": "Rayuela",
+  "autor": "Julio Cortázar"
+}
