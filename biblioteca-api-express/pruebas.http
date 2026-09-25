@@ -1,0 +1,103 @@
+@base = http://localhost:3000
+
+### Listar (paginado con metadata)
+GET {{base}}/books
+
+### Filtro por autor + orden descendente por stock
+GET {{base}}/books?author=orwell&sort=-stock
+
+### Paginación: página 2 de a 2
+GET {{base}}/books?page=2&limit=2
+
+### Desafío: paginación inválida (400 VALIDATION_ERROR)
+GET {{base}}/books?page=0&limit=abc
+
+### 1. POST con author vacío y sin title (400, details de title y author)
+POST {{base}}/books
+Content-Type: application/json
+
+{
+  "author": ""
+}
+
+### 2. POST con stock negativo (400, details de stock)
+POST {{base}}/books
+Content-Type: application/json
+
+{
+  "title": "X",
+  "author": "Y",
+  "stock": -3
+}
+
+### 3. POST con stock de tipo incorrecto (400)
+POST {{base}}/books
+Content-Type: application/json
+
+{
+  "title": "X",
+  "author": "Y",
+  "stock": "cinco"
+}
+
+### 4. POST válido sin stock (201, stock queda en 0 por el default de Zod)
+POST {{base}}/books
+Content-Type: application/json
+
+{
+  "title": "Rayuela",
+  "author": "Julio Cortázar",
+  "isbn": "9788437604947"
+}
+
+### Desafío: ISBN que no tiene 13 dígitos (400)
+POST {{base}}/books
+Content-Type: application/json
+
+{
+  "title": "X",
+  "author": "Y",
+  "isbn": "123"
+}
+
+### Desafío: ISBN repetido (409 ISBN_DUPLICATE)
+POST {{base}}/books
+Content-Type: application/json
+
+{
+  "title": "Otra edición",
+  "author": "Gabriel García Márquez",
+  "isbn": "9780307474728"
+}
+
+### 5. Libro inexistente (404 armado por el errorHandler)
+GET {{base}}/books/999
+
+### 6. PUT con solo stock (200, title original intacto)
+PUT {{base}}/books/1
+Content-Type: application/json
+
+{
+  "stock": 5
+}
+
+### PUT a un libro inexistente (404)
+PUT {{base}}/books/999
+Content-Type: application/json
+
+{
+  "stock": 1
+}
+
+### Borrar libro
+DELETE {{base}}/books/2
+
+### Ruta inexistente (404 ROUTE_NOT_FOUND)
+GET {{base}}/cualquier-cosa
+
+### Autores
+GET {{base}}/authors/5
+
+# 7. Error inesperado: agregar temporalmente `JSON.parse("{");` al inicio de `get` en
+# booksController.js, pedir GET /books/1 → 500 INTERNAL_ERROR y stack completo en consola.
+# Después sacar esa línea.
