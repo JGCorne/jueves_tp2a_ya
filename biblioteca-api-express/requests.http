@@ -1,0 +1,64 @@
+@base = http://localhost:3000
+
+### 1. Listar
+GET {{base}}/books
+
+### Filtro + orden + paginación
+GET {{base}}/books?author=garcía&sort=-stock&page=1&limit=5
+
+### 2. Detalle
+GET {{base}}/books/1
+
+### Inexistente (404)
+GET {{base}}/books/999
+
+### 3. Body incompleto (400)
+POST {{base}}/books
+Content-Type: application/json
+
+{
+  "author": ""
+}
+
+### 4. Válido (201)
+POST {{base}}/books
+Content-Type: application/json
+
+{
+  "title": "Ficciones",
+  "author": "Jorge Luis Borges",
+  "isbn": "9788420633114",
+  "stock": 2
+}
+
+### 5. ISBN duplicado (409)
+POST {{base}}/books
+Content-Type: application/json
+
+{
+  "title": "Ficciones (otra edición)",
+  "author": "Jorge Luis Borges",
+  "isbn": "9788420633114"
+}
+
+### 6. PUT parcial (200)
+PUT {{base}}/books/1
+Content-Type: application/json
+
+{
+  "stock": 10
+}
+
+### 7. PUT con stock negativo (400)
+PUT {{base}}/books/1
+Content-Type: application/json
+
+{
+  "stock": -1
+}
+
+### 8. Borrar (204)
+DELETE {{base}}/books/1
+
+### Borrar de nuevo (404)
+DELETE {{base}}/books/1
